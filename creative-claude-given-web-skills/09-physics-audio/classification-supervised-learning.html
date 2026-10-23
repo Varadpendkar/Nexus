@@ -1,0 +1,1046 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="data:," />
+    <title>Classification — A Beginner's Map</title>
+    <style>
+      :root{
+        --bg:#F6F1E7;
+        --card:#FFFFFF;
+        --ink:#23272F;
+        --muted:#5B6470;
+        --faint:#8A8FA0;
+        --accent:#3B5BFD;
+        --accent-deep:#2B44C8;
+        --accent-tint:#E4EAFF;
+        --hair:#E3DAC6;
+        --card-border:#E7DFCE;
+        --shadow:0 1px 2px rgba(60,50,20,.05),0 8px 24px rgba(60,50,20,.06);
+        --green-bg:#DCFCE7; --green-ink:#15803D;
+        --red-bg:#FEE2E2;   --red-ink:#B91C1C;
+        --amber-bg:#FFEDD5; --amber-ink:#B45309;
+        --blue-bg:#DBEAFE;  --blue-ink:#1D4ED8;
+        --violet-bg:#EDE9FE;--violet-ink:#6D28D9;
+        --gray-bg:#E5E7EB;  --gray-ink:#4B5563;
+        --table-head:#EFF3FF;
+        --code-chrome:#12161F;
+        --track:#E9E2D0;
+      }
+      @media (prefers-color-scheme: dark){
+        :root{
+          --bg:#191A21;
+          --card:#23242E;
+          --ink:#EDEFF4;
+          --muted:#A9B0C0;
+          --faint:#7C8496;
+          --accent:#7E97FF;
+          --accent-deep:#A9BBFF;
+          --accent-tint:#2A3358;
+          --hair:#343645;
+          --card-border:#343645;
+          --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.35);
+          --table-head:#2A3358;
+          --track:#3A3D4D;
+        }
+      }
+      *{box-sizing:border-box;}
+      html{scroll-behavior:smooth;}
+      body{
+        margin:0;background:var(--bg);color:var(--ink);
+        font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+        font-size:16.5px;line-height:1.62;
+        -webkit-font-smoothing:antialiased;
+      }
+      .wrap{max-width:740px;margin:0 auto;padding:28px 18px 56px;}
+      h1,h2,h3{font-family:Georgia,"Iowan Old Style","Times New Roman",serif;line-height:1.22;margin:0;}
+      p{margin:0 0 12px;}
+      p:last-child{margin-bottom:0;}
+      a{color:var(--accent-deep);}
+      code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.92em;}
+      .kicker{
+        font-size:11.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+        color:var(--accent);margin:0 0 10px;
+      }
+      /* ---------- hero ---------- */
+      .hero{padding:6px 2px 2px;}
+      .hero h1{font-size:34px;font-weight:700;letter-spacing:-.01em;}
+      .hero h1 .u{box-shadow:inset 0 -0.32em 0 var(--accent-tint);}
+      .subtitle{font-size:18px;color:var(--muted);margin-top:10px;max-width:34em;}
+      .hero-strip{
+        margin-top:18px;background:var(--card);border:1px solid var(--card-border);
+        border-radius:16px;box-shadow:var(--shadow);padding:16px 18px;
+      }
+      .strip-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+      .strip-row + .strip-row{margin-top:12px;padding-top:12px;border-top:1px dashed var(--hair);}
+      .strip-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-right:2px;}
+      .sortbar{display:flex;height:26px;border-radius:8px;overflow:hidden;border:1px solid var(--card-border);margin-top:4px;}
+      .sortbar div{display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;}
+      .sortbar .sb-spam{background:var(--red-bg);color:var(--red-ink);flex:46;}
+      .sortbar .sb-not{background:var(--green-bg);color:var(--green-ink);flex:54;}
+      .sortbar-cap{font-size:13px;color:var(--muted);margin-top:6px;}
+      /* pills */
+      .pill{
+        display:inline-flex;align-items:center;gap:5px;
+        font-size:13px;font-weight:700;line-height:1;
+        padding:5px 10px;border-radius:999px;white-space:nowrap;
+      }
+      .pill.green{background:var(--green-bg);color:var(--green-ink);}
+      .pill.red{background:var(--red-bg);color:var(--red-ink);}
+      .pill.amber{background:var(--amber-bg);color:var(--amber-ink);}
+      .pill.blue{background:var(--blue-bg);color:var(--blue-ink);}
+      .pill.violet{background:var(--violet-bg);color:var(--violet-ink);}
+      .pill.gray{background:var(--gray-bg);color:var(--gray-ink);}
+      .pill.accent{background:var(--accent-tint);color:var(--accent-deep);}
+      /* listen */
+      .listen-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;align-items:center;}
+      .btn{
+        appearance:none;border:1px solid var(--accent);cursor:pointer;
+        background:var(--accent);color:#fff;font:inherit;font-size:14.5px;font-weight:700;
+        padding:9px 16px;border-radius:999px;line-height:1.2;
+      }
+      .btn.ghost{background:transparent;color:var(--accent-deep);}
+      .btn:disabled{opacity:.45;cursor:default;}
+      .listen-state{font-size:13.5px;color:var(--muted);}
+      /* chips */
+      .chips{margin:22px 0 4px;}
+      .chips .strip-label{display:block;margin-bottom:8px;}
+      .chip-row{display:flex;flex-wrap:wrap;gap:8px;}
+      .chip{
+        text-decoration:none;color:var(--ink);background:var(--card);
+        border:1px solid var(--card-border);border-radius:999px;
+        font-size:13.5px;font-weight:600;padding:7px 13px;box-shadow:var(--shadow);
+      }
+      .chip b{color:var(--accent);font-weight:800;margin-right:5px;}
+      /* ---------- cards ---------- */
+      .card{
+        background:var(--card);border:1px solid var(--card-border);border-radius:16px;
+        box-shadow:var(--shadow);padding:24px 22px;margin-top:22px;
+      }
+      .card-head{display:flex;gap:14px;align-items:flex-start;margin-bottom:12px;}
+      .badge{
+        flex:0 0 auto;width:42px;height:42px;border:2px solid var(--accent);border-radius:11px;
+        display:flex;align-items:center;justify-content:center;
+        font-family:Georgia,serif;font-size:19px;font-weight:700;color:var(--accent);
+      }
+      .card-head h2{font-size:23px;font-weight:700;padding-top:2px;}
+      .card-head .kicker{margin-bottom:3px;}
+      .lead{font-size:17px;}
+      .small{font-size:14.5px;color:var(--muted);}
+      /* examples rows */
+      .ex-row{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-top:1px dashed var(--hair);}
+      .ex-row:first-of-type{border-top:none;}
+      .ex-row .ex-name{font-weight:700;min-width:118px;}
+      .ex-row .ex-pills{display:flex;gap:6px;flex-wrap:wrap;padding-top:2px;}
+      /* flow diagram */
+      .flow{display:flex;align-items:stretch;gap:0;margin:14px 0 6px;flex-wrap:wrap;}
+      .flow-box{
+        flex:1 1 150px;border:1.5px solid var(--hair);border-radius:12px;padding:12px 13px;background:var(--bg);
+      }
+      .flow-box.key{border-color:var(--accent);background:var(--accent-tint);}
+      .flow-box h4{margin:0 0 4px;font-size:15px;font-family:Georgia,serif;}
+      .flow-box p{font-size:13.5px;color:var(--muted);margin:0;}
+      .flow-arrow{display:flex;align-items:center;justify-content:center;padding:0 7px;color:var(--accent);font-weight:800;font-size:19px;}
+      /* details / try it */
+      details.tryit{
+        margin-top:14px;border:1px solid var(--hair);border-radius:12px;padding:12px 14px;background:var(--bg);
+      }
+      details.tryit summary{cursor:pointer;font-weight:700;font-size:15px;list-style:none;}
+      details.tryit summary::-webkit-details-marker{display:none;}
+      details.tryit summary .qmark{
+        display:inline-flex;width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;
+        align-items:center;justify-content:center;font-size:13px;margin-right:8px;vertical-align:-5px;
+      }
+      details.tryit[open ] summary .qmark{background:var(--green-ink);}
+      details.tryit .ans{margin-top:10px;font-size:15px;}
+      /* callouts */
+      .callout{border-radius:12px;padding:13px 15px;margin-top:14px;font-size:15px;}
+      .callout.warn{background:var(--amber-bg);color:#7C4A03;}
+      .callout.rule{background:var(--accent-tint);color:var(--ink);}
+      .callout b{font-weight:800;}
+      @media (prefers-color-scheme: dark){ .callout.warn{color:#F5D9AE;} }
+      /* tables */
+      .tbl-wrap{margin:12px 0 4px;}
+      table{width:100%;border-collapse:collapse;font-size:14.5px;}
+      th{
+        text-align:left;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;
+        background:var(--table-head);color:var(--accent-deep);padding:8px 10px;
+      }
+      th:first-child{border-radius:8px 0 0 0;} th:last-child{border-radius:0 8px 0 0;}
+      td{padding:8px 10px;border-bottom:1px solid var(--hair);vertical-align:top;}
+      tr:last-child td{border-bottom:none;}
+      td.num,th.num{text-align:center;font-variant-numeric:tabular-nums;}
+      /* svg figures */
+      figure{margin:14px 0 4px;}
+      figure svg{width:100%;height:auto;display:block;}
+      figcaption{font-size:13.5px;color:var(--muted);margin-top:7px;text-align:center;}
+      .fig-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+      @media (max-width:560px){ .fig-grid{grid-template-columns:1fr;} .hero h1{font-size:29px;} }
+      /* confusion matrix static */
+      .cm{display:grid;grid-template-columns:86px 1fr 1fr;gap:6px;margin:14px 0 6px;font-size:13.5px;}
+      .cm .cm-h{display:flex;align-items:center;justify-content:center;font-weight:700;text-align:center;padding:6px 4px;color:var(--muted);font-size:12.5px;}
+      .cm .cm-cell{border-radius:10px;padding:10px 11px;}
+      .cm .cm-cell b{display:block;font-size:16px;}
+      .cm .good{background:var(--green-bg);color:#14532D;}
+      .cm .bad{background:var(--red-bg);color:#7F1D1D;}
+      .cm .cm-cell .cell-note{font-size:12.5px;opacity:.85;}
+      /* widgets */
+      .widget{
+        margin-top:16px;border:1.5px solid var(--accent);border-radius:14px;padding:16px 16px 14px;
+        background:linear-gradient(180deg,var(--accent-tint),transparent 130px);
+      }
+      .widget h3{font-size:18px;margin-bottom:4px;}
+      .widget .w-sub{font-size:14px;color:var(--muted);margin-bottom:12px;}
+      .slider-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:10px 0;}
+      .slider-row label{font-weight:700;font-size:14.5px;min-width:150px;}
+      .slider-row output{font-weight:800;color:var(--accent-deep);min-width:2.2em;text-align:right;font-variant-numeric:tabular-nums;}
+      input[type="range"]{flex:1 1 180px;accent-color:var(--accent);height:28px;}
+      .readouts{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;}
+      .readout{
+        flex:1 1 130px;background:var(--card);border:1px solid var(--card-border);border-radius:12px;padding:10px 12px;text-align:center;
+      }
+      .readout .r-num{font-family:Georgia,serif;font-size:26px;font-weight:700;line-height:1.1;}
+      .readout .r-lab{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);}
+      .verdict{margin-top:12px;font-size:15px;font-weight:600;background:var(--card);border:1px dashed var(--accent);border-radius:10px;padding:10px 13px;}
+      canvas.plot{width:100%;height:auto;display:block;border-radius:10px;border:1px solid var(--card-border);background:#fff;}
+      .legend-row{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--muted);margin-top:8px;}
+      .legend-row .dot{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:5px;vertical-align:-1px;}
+      .legend-row .sq{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px;}
+      /* steppers (confusion explorer) */
+      .cm-edit{display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;margin-top:6px;}
+      @media (max-width:560px){ .cm-edit{grid-template-columns:1fr;} }
+      .cm-edit .slider-row label{min-width:128px;}
+      /* code block */
+      .codeblock{margin-top:16px;border-radius:12px;overflow:hidden;border:1px solid #0B0E14;background:var(--code-chrome);}
+      .code-chrome{display:flex;align-items:center;gap:7px;padding:9px 12px;background:#1B2130;}
+      .code-chrome .cdot{width:11px;height:11px;border-radius:50%;}
+      .code-chrome .lang{margin-left:6px;font-size:12px;color:#9AA4B8;font-family:ui-monospace,Menlo,monospace;letter-spacing:.05em;}
+      .copy-btn{
+        margin-left:auto;appearance:none;border:1px solid #39415A;background:#232A3D;color:#D7DEEC;
+        font:inherit;font-size:12.5px;font-weight:700;border-radius:7px;padding:4px 11px;cursor:pointer;
+      }
+      .codeblock pre{margin:0;padding:14px 0;overflow-x:auto;}
+      .cl{display:flex;line-height:1.55;}
+      .cl .ln{flex:0 0 2.4em;text-align:right;padding-right:14px;color:#4A5468;font-size:12.5px;user-select:none;padding-top:1px;}
+      .cl .lc{white-space:pre;color:#E6EBF5;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13.5px;padding-right:16px;}
+      .tok-k{color:#C792EA;} .tok-s{color:#A5D6A7;} .tok-c{color:#7E8AA0;font-style:italic;}
+      .tok-n{color:#F2A56B;} .tok-f{color:#82AAFF;}
+      /* pocket rules */
+      .pocket{border-color:var(--green-ink);}
+      .pocket ul{list-style:none;margin:6px 0 0;padding:0;}
+      .pocket li{padding:7px 0 7px 30px;position:relative;border-top:1px dashed var(--hair);font-size:15.5px;}
+      .pocket li:first-child{border-top:none;}
+      .pocket li::before{content:"✓";position:absolute;left:2px;top:7px;color:var(--green-ink);font-weight:900;}
+      /* quiz */
+      .quiz-q{border-top:1px dashed var(--hair);padding:14px 0 4px;}
+      .quiz-q:first-of-type{border-top:none;}
+      .quiz-q .qq{font-weight:700;font-size:16px;margin-bottom:8px;}
+      .quiz-q label.opt{
+        display:flex;gap:9px;align-items:flex-start;padding:7px 10px;border-radius:9px;cursor:pointer;font-size:15px;
+      }
+      .quiz-q label.opt:hover{background:var(--bg);}
+      .quiz-q label.opt input{margin-top:4px;accent-color:var(--accent);}
+      .quiz-q.right .qq::after{content:" ✓ correct";color:var(--green-ink);font-size:14px;}
+      .quiz-q.wrong .qq::after{content:" ✗ not quite";color:var(--red-ink);font-size:14px;}
+      .quiz-q .expl{display:none;margin:8px 0 10px;font-size:14.5px;background:var(--bg);border-radius:9px;padding:9px 12px;}
+      .quiz-q.show .expl{display:block;}
+      .quiz-actions{display:flex;gap:10px;align-items:center;margin-top:14px;flex-wrap:wrap;}
+      .score{font-family:Georgia,serif;font-size:20px;font-weight:700;}
+      /* roadmap */
+      .road{display:flex;align-items:flex-start;gap:0;margin:16px 0 6px;}
+      .road .stop{flex:1;text-align:center;position:relative;padding-top:20px;font-size:14px;}
+      .road .stop::before{
+        content:"";position:absolute;top:7px;left:0;right:0;height:2px;background:var(--track);
+      }
+      .road .stop::after{
+        content:"";position:absolute;top:1px;left:50%;transform:translateX(-50%);
+        width:14px;height:14px;border-radius:50%;background:var(--card);border:3px solid var(--faint);
+      }
+      .road .stop.here{font-weight:800;color:var(--accent-deep);}
+      .road .stop.here::after{background:var(--accent);border-color:var(--accent);}
+      .road .stop small{display:block;color:var(--muted);font-weight:400;font-size:12.5px;}
+      .nextup{
+        margin-top:22px;border:1.5px dashed var(--accent);border-radius:16px;padding:16px 18px;
+        font-size:16px;background:var(--card);
+      }
+      .nextup b{color:var(--accent-deep);}
+      .colophon{margin-top:26px;font-size:12.5px;color:var(--faint);text-align:center;line-height:1.55;}
+    </style>
+  </head>
+  <body>
+    <main class="wrap">
+
+      <!-- ================= HERO ================= -->
+      <header class="hero">
+        <p class="kicker" data-speak="Machine learning. Beginner level. Lesson 11.">Machine Learning · Beginner · 11</p>
+        <h1 data-speak="Classification — a beginner's map.">Classification — <span class="u">A Beginner's Map</span></h1>
+        <p class="subtitle" data-speak="Teaching computers to sort things into buckets: spam or not, sick or healthy, cat or dog.">Teaching computers to sort things into buckets: spam or not, sick or healthy, cat or dog.</p>
+
+        <div class="hero-strip">
+          <div class="strip-row">
+            <span class="strip-label">The idea in pills</span>
+            <span class="pill blue">supervised = learns from labeled examples</span>
+            <span class="pill accent">answer = a category</span>
+            <span class="pill gray">not a number</span>
+          </div>
+          <div class="strip-row" style="display:block;">
+            <span class="strip-label">A spam filter's day, in one bar</span>
+            <div class="sortbar" role="img" aria-label="Bar showing 46 percent of mail flagged as spam and 54 percent let through as not spam">
+              <div class="sb-spam">spam · 46</div>
+              <div class="sb-not">not spam · 54</div>
+            </div>
+            <p class="sortbar-cap">Every email lands in exactly one bucket. Sorting into buckets is the whole job.</p>
+          </div>
+          <div class="strip-row">
+            <span class="strip-label">Legend for this page</span>
+            <span class="pill red">spam</span>
+            <span class="pill green">not spam</span>
+            <span class="pill blue">supervised</span>
+            <span class="pill violet">category label</span>
+          </div>
+        </div>
+
+        <div class="listen-row">
+          <button class="btn" id="listenBtn" type="button">▶ Listen to this lesson</button>
+          <button class="btn ghost" id="stopBtn" type="button" disabled>■ Stop</button>
+          <span class="listen-state" id="listenState">Reads the lesson aloud, section by section.</span>
+        </div>
+      </header>
+
+      <!-- ================= CHIPS ================= -->
+      <nav class="chips" aria-label="In this lesson">
+        <span class="strip-label">In this lesson</span>
+        <div class="chip-row">
+          <a class="chip" href="#sec1"><b>01</b>What it is</a>
+          <a class="chip" href="#sec2"><b>02</b>How it learns</a>
+          <a class="chip" href="#sec3"><b>03</b>Meet the classifiers</a>
+          <a class="chip" href="#sec4"><b>04</b>A worked example</a>
+          <a class="chip" href="#sec5"><b>05</b>Decision boundaries</a>
+          <a class="chip" href="#sec6"><b>06</b>Is it any good?</a>
+          <a class="chip" href="#sec7"><b>07</b>Classic mistakes</a>
+          <a class="chip" href="#quiz"><b>✓</b>Check your learning</a>
+        </div>
+      </nav>
+
+      <!-- ================= 01 ================= -->
+      <section class="card" id="sec1">
+        <div class="card-head">
+          <div class="badge">01</div>
+          <div>
+            <p class="kicker">The big idea</p>
+            <h2 data-speak="Section 1. What classification is.">What classification is</h2>
+          </div>
+        </div>
+        <p class="lead" data-speak="Supervised learning means the computer learns from examples that already come with the right answer attached. That attached answer is called a label, and examples with labels are called labeled data.">Supervised learning means the computer learns from examples that already come with the right answer attached. That attached answer is called a <b>label</b>, and examples with labels are <b>labeled data</b> — like flashcards with the answer printed on the back.</p>
+        <p data-speak="Classification is the supervised task where the answer is a category — a bucket with a name — never a number."><b>Classification</b> is the supervised task where the answer is a <b>category</b> — a named bucket — never a number. The computer looks at something new and picks which bucket it belongs in.</p>
+        <div class="ex-row">
+          <div class="ex-name">Spam filter</div>
+          <div class="ex-pills"><span class="pill red">spam</span><span class="pill green">not spam</span></div>
+        </div>
+        <div class="ex-row">
+          <div class="ex-name">Tumor test</div>
+          <div class="ex-pills"><span class="pill green">benign — harmless</span><span class="pill red">malignant — dangerous</span></div>
+        </div>
+        <div class="ex-row">
+          <div class="ex-name">Photo app</div>
+          <div class="ex-pills"><span class="pill violet">cat</span><span class="pill violet">dog</span></div>
+        </div>
+        <div class="callout rule"><b>Rule of thumb:</b> if the answer is a <i>name</i>, it's classification. If the answer is a <i>number</i>, it's regression — the next lesson.</div>
+      </section>
+
+      <!-- ================= 02 ================= -->
+      <section class="card" id="sec2">
+        <div class="card-head">
+          <div class="badge">02</div>
+          <div>
+            <p class="kicker">The learning loop</p>
+            <h2 data-speak="Section 2. How a classifier learns.">How a classifier learns</h2>
+          </div>
+        </div>
+        <p class="lead" data-speak="You show the computer many labeled examples, called training data. It looks for patterns that separate the buckets. What it learns — the pattern itself — is called the model. Then the model makes guesses, called predictions, on new examples it has never seen.">You show the computer many labeled examples — the <b>training data</b>. It hunts for patterns that separate the buckets. The pattern it ends up with is the <b>model</b> (the learned pattern itself — not the recipe that found it). Then the model makes guesses, called <b>predictions</b>, on new examples it has never seen.</p>
+        <div class="flow" role="img" aria-label="Flow: training data goes in, the model finds patterns, then the model predicts labels for new unseen data">
+          <div class="flow-box"><h4>Training data</h4><p>Labeled examples: "this one is spam, this one is not…"</p></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-box key"><h4>The model</h4><p>Finds the pattern that separates the buckets.</p></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-box"><h4>New, unseen data</h4><p>A fresh email arrives — the model predicts its bucket.</p></div>
+        </div>
+        <p data-speak="Why keep some examples unseen? Think of school. Practice tests are for learning. The final exam is for judging. If you grade a student on the practice test they already memorized, the score tells you nothing. So data is split: most of it becomes the training set for practice, and a held-back part becomes the test set — the final exam. You only trust the final exam score.">Why hold some examples back? Think of school. <b>Practice tests</b> are for learning; the <b>final exam</b> is for judging. Grade a student on a practice test they already memorized and the score tells you nothing. So the data is split: most becomes the <b>training set</b> (practice), and a held-back part becomes the <b>test set</b> (the final exam). <b>You only trust the final exam score.</b></p>
+        <details class="tryit">
+          <summary><span class="qmark">?</span>Try it: predicting tomorrow's temperature — 31 degrees — is that classification?</summary>
+          <div class="ans"><b>No.</b> 31 degrees is a <i>number</i>, not a category. Predicting numbers is <b>regression</b>. Classification would be predicting a bucket like <span class="pill violet">hot</span> or <span class="pill violet">cold</span>.</div>
+        </details>
+      </section>
+
+      <!-- ================= 03 ================= -->
+      <section class="card" id="sec3">
+        <div class="card-head">
+          <div class="badge">03</div>
+          <div>
+            <p class="kicker">The toolbox</p>
+            <h2 data-speak="Section 3. Meet the classifiers.">Meet the classifiers</h2>
+          </div>
+        </div>
+        <p class="lead" data-speak="A classifier is the recipe — the algorithm — that learns the pattern. There are many recipes, and each has its own style. Here are the six names you will meet again and again.">A <b>classifier</b> is the recipe (the <i>algorithm</i>) that learns the pattern. Different recipes have different styles. These six names come up again and again:</p>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Algorithm</th><th>The one-line idea</th><th>Shines when…</th></tr></thead>
+            <tbody>
+              <tr><td><b>Logistic Regression</b></td><td>Draws the best straight dividing line between the buckets.</td><td>You want a simple, fast, explainable start.</td></tr>
+              <tr><td><b>k-NN</b> <span class="small">(k nearest neighbors)</span></td><td>Asks the nearest examples: "what are you?" and copies the majority.</td><td>The dataset is small and groups form natural clumps.</td></tr>
+              <tr><td><b>Decision Tree</b></td><td>A flowchart of yes/no questions that ends in a bucket.</td><td>You want to <i>see</i> the reasoning, step by step.</td></tr>
+              <tr><td><b>Random Forest</b></td><td>Builds many decision trees and lets them vote.</td><td>You want accuracy and don't mind a black box.</td></tr>
+              <tr><td><b>Naive Bayes</b></td><td>Fast probability math: "how likely is each bucket, given these words?"</td><td>Text — spam filters are its classic home.</td></tr>
+              <tr><td><b>SVM</b> <span class="small">(support vector machine)</span></td><td>Draws the <i>widest</i> possible boundary between the groups.</td><td>Groups are close and every bit of margin matters.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="small">Each of these has its own full explainer in the ML catalogue — just ask in chat, e.g. "explain decision trees", and that lesson is one message away.</p>
+
+        <p style="margin-top:14px;" data-speak="Here is the simplest classifier in real code. Each line is explained in plain words in the comments.">Here is the simplest one — logistic regression — doing the spam job in real code. Every line carries a plain-words comment:</p>
+        <div class="codeblock">
+          <div class="code-chrome">
+            <span class="cdot" style="background:#FF5F57"></span>
+            <span class="cdot" style="background:#FEBC2E"></span>
+            <span class="cdot" style="background:#28C840"></span>
+            <span class="lang">spam_filter.py — Python · scikit-learn</span>
+            <button class="copy-btn" id="copyBtn" type="button">Copy</button>
+          </div>
+          <pre id="codePre" aria-label="Python code: fit a logistic regression on email features and predict one new email"><div class="cl"><span class="ln">1</span><span class="lc"><span class="tok-k">from</span> sklearn.linear_model <span class="tok-k">import</span> LogisticRegression  <span class="tok-c"># borrow the classifier</span></span></div><div class="cl"><span class="ln">2</span><span class="lc"></span></div><div class="cl"><span class="ln">3</span><span class="lc"><span class="tok-c"># each email = two numbers: [has the word "free"? 1/0, how many "!"]</span></span></div><div class="cl"><span class="ln">4</span><span class="lc">X = [[<span class="tok-n">1</span>, <span class="tok-n">3</span>], [<span class="tok-n">1</span>, <span class="tok-n">1</span>], [<span class="tok-n">1</span>, <span class="tok-n">2</span>], [<span class="tok-n">0</span>, <span class="tok-n">4</span>],</span></div><div class="cl"><span class="ln">5</span><span class="lc">     [<span class="tok-n">0</span>, <span class="tok-n">0</span>], [<span class="tok-n">0</span>, <span class="tok-n">1</span>], [<span class="tok-n">1</span>, <span class="tok-n">0</span>], [<span class="tok-n">0</span>, <span class="tok-n">0</span>]]</span></div><div class="cl"><span class="ln">6</span><span class="lc">y = [<span class="tok-s">"spam"</span>, <span class="tok-s">"spam"</span>, <span class="tok-s">"spam"</span>, <span class="tok-s">"spam"</span>,      <span class="tok-c"># the labels —</span></span></div><div class="cl"><span class="ln">7</span><span class="lc">     <span class="tok-s">"not"</span>, <span class="tok-s">"not"</span>, <span class="tok-s">"not"</span>, <span class="tok-s">"not"</span>]          <span class="tok-c"># the right answers</span></span></div><div class="cl"><span class="ln">8</span><span class="lc"></span></div><div class="cl"><span class="ln">9</span><span class="lc">model = <span class="tok-f">LogisticRegression</span>()   <span class="tok-c"># create the model</span></span></div><div class="cl"><span class="ln">10</span><span class="lc">model.<span class="tok-f">fit</span>(X, y)                 <span class="tok-c"># learn from the labeled emails</span></span></div><div class="cl"><span class="ln">11</span><span class="lc"></span></div><div class="cl"><span class="ln">12</span><span class="lc"><span class="tok-f">print</span>(model.<span class="tok-f">predict</span>([[<span class="tok-n">1</span>, <span class="tok-n">2</span>]]))  <span class="tok-c"># new email: has "free", two "!"</span></span></div><div class="cl"><span class="ln">13</span><span class="lc"><span class="tok-c"># → ['spam']  — the model puts it in the spam bucket</span></span></div></pre>
+        </div>
+        <p class="small" style="margin-top:8px;">Same 8 emails as the worked example in §04 — <code>fit</code> is the learning, <code>predict</code> is the guessing.</p>
+      </section>
+
+      <!-- ================= 04 ================= -->
+      <section class="card" id="sec4">
+        <div class="card-head">
+          <div class="badge">04</div>
+          <div>
+            <p class="kicker">Hands on</p>
+            <h2 data-speak="Section 4. A worked example, start to finish.">A worked example, start to finish</h2>
+          </div>
+        </div>
+        <p class="lead" data-speak="Here are 8 labeled emails. Each email is described by two features — a feature is just one measurable fact about the email. Feature one: does it contain the word free? Feature two: how many exclamation marks does it have? The numbers here are small and made up for learning, but the method is exactly the real one.">Eight labeled emails. Each one is described by two <b>features</b> — a feature is just one measurable fact about the thing: <b>(1)</b> does it contain the word "free"? <b>(2)</b> how many exclamation marks? <span class="small">(Tiny made-up dataset, labeled <i>illustrative</i> — the method is the real one.)</span></p>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th class="num">#</th><th>Contains "free"?</th><th class="num">Exclamation marks</th><th>Label</th></tr></thead>
+            <tbody>
+              <tr><td class="num">1</td><td>Yes</td><td class="num">3</td><td><span class="pill red">spam</span></td></tr>
+              <tr><td class="num">2</td><td>Yes</td><td class="num">1</td><td><span class="pill red">spam</span></td></tr>
+              <tr><td class="num">3</td><td>Yes</td><td class="num">2</td><td><span class="pill red">spam</span></td></tr>
+              <tr><td class="num">4</td><td>No</td><td class="num">4</td><td><span class="pill red">spam</span></td></tr>
+              <tr><td class="num">5</td><td>No</td><td class="num">0</td><td><span class="pill green">not spam</span></td></tr>
+              <tr><td class="num">6</td><td>No</td><td class="num">1</td><td><span class="pill green">not spam</span></td></tr>
+              <tr><td class="num">7</td><td>Yes</td><td class="num">0</td><td><span class="pill green">not spam</span></td></tr>
+              <tr><td class="num">8</td><td>No</td><td class="num">0</td><td><span class="pill green">not spam</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p data-speak="Watch a decision tree think. It tries questions and keeps the one that separates the buckets best. Its first question: contains free? Three of the four spam emails say yes, so that one question already pulls most spam to one side. Two stragglers remain. Email 7 says free but is honest — it never shouts, with zero exclamation marks. Email 4 is spam hiding on the no side, but it shouts with four exclamation marks. One follow-up question on each side catches both, and all 8 emails land in the right bucket."><b>Watch a decision tree think.</b> It tries questions and keeps the one that separates the buckets best. First question: <i>"Contains 'free'?"</i> — 3 of the 4 spam emails say yes, so one question already pulls most spam aside. Two stragglers remain: email 7 says "free" but is honest (it never shouts — zero "!"), and email 4 is spam hiding on the "no" side (but it shouts with 4 "!"). One follow-up question on each side catches both:</p>
+        <figure>
+          <svg viewBox="0 0 680 300" role="img" aria-label="Decision tree: first question contains free, then one follow-up question on each side sorts all 8 emails correctly">
+            <!-- root -->
+            <rect x="240" y="8" width="200" height="44" rx="10" fill="#EFF3FF" stroke="#3B5BFD" stroke-width="2"/>
+            <text x="340" y="36" text-anchor="middle" font-size="15" font-weight="700" fill="#23272F">Contains "free"?</text>
+            <!-- yes branch to follow-up node -->
+            <line x1="290" y1="52" x2="180" y2="98" stroke="#5B6470" stroke-width="1.6"/>
+            <text x="204" y="72" font-size="13" font-weight="700" fill="#15803D">YES</text>
+            <rect x="60" y="100" width="220" height="44" rx="10" fill="#FFFFFF" stroke="#3B5BFD" stroke-width="1.6"/>
+            <text x="170" y="127" text-anchor="middle" font-size="14.5" font-weight="700" fill="#23272F">At least one "!"?</text>
+            <!-- no branch to follow-up node -->
+            <line x1="390" y1="52" x2="500" y2="98" stroke="#5B6470" stroke-width="1.6"/>
+            <text x="464" y="72" font-size="13" font-weight="700" fill="#B45309">NO</text>
+            <rect x="400" y="100" width="220" height="44" rx="10" fill="#FFFFFF" stroke="#3B5BFD" stroke-width="1.6"/>
+            <text x="510" y="127" text-anchor="middle" font-size="14.5" font-weight="700" fill="#23272F">More than 2 "!"?</text>
+            <!-- left node leaves -->
+            <line x1="118" y1="144" x2="92" y2="192" stroke="#5B6470" stroke-width="1.6"/>
+            <text x="78" y="168" font-size="13" font-weight="700" fill="#15803D">YES</text>
+            <rect x="10" y="194" width="160" height="52" rx="10" fill="#FEE2E2" stroke="#B91C1C" stroke-width="1.4"/>
+            <text x="90" y="216" text-anchor="middle" font-size="14.5" font-weight="700" fill="#7F1D1D">Predict: spam</text>
+            <text x="90" y="235" text-anchor="middle" font-size="12.5" fill="#7F1D1D">emails 1, 2, 3</text>
+            <line x1="222" y1="144" x2="256" y2="192" stroke="#5B6470" stroke-width="1.6"/>
+            <text x="248" y="168" font-size="13" font-weight="700" fill="#B45309">NO</text>
+            <rect x="180" y="194" width="160" height="52" rx="10" fill="#DCFCE7" stroke="#15803D" stroke-width="1.4"/>
+            <text x="260" y="216" text-anchor="middle" font-size="14.5" font-weight="700" fill="#14532D">Predict: not spam</text>
+            <text x="260" y="235" text-anchor="middle" font-size="12.5" fill="#14532D">email 7 — the quiet one</text>
+            <!-- right node leaves -->
+            <line x1="462" y1="144" x2="432" y2="192" stroke="#5B6470" stroke-width="1.6"/>
+            <text x="412" y="168" font-size="13" font-weight="700" fill="#15803D">YES</text>
+            <rect x="350" y="194" width="160" height="52" rx="10" fill="#FEE2E2" stroke="#B91C1C" stroke-width="1.4"/>
+            <text x="430" y="216" text-anchor="middle" font-size="14.5" font-weight="700" fill="#7F1D1D">Predict: spam</text>
+            <text x="430" y="235" text-anchor="middle" font-size="12.5" fill="#7F1D1D">email 4 — the shouter</text>
+            <line x1="558" y1="144" x2="590" y2="192" stroke="#5B6470" stroke-width="1.6"/>
+            <text x="582" y="168" font-size="13" font-weight="700" fill="#B45309">NO</text>
+            <rect x="520" y="194" width="160" height="52" rx="10" fill="#DCFCE7" stroke="#15803D" stroke-width="1.4"/>
+            <text x="600" y="216" text-anchor="middle" font-size="14.5" font-weight="700" fill="#14532D">Predict: not spam</text>
+            <text x="600" y="235" text-anchor="middle" font-size="12.5" fill="#14532D">emails 5, 6, 8</text>
+            <text x="340" y="282" text-anchor="middle" font-size="13" fill="#5B6470">Three questions sort all 8 emails correctly — on this tiny training set.</text>
+          </svg>
+          <figcaption>The tree's first split: "contains 'free'?" alone separates 3 of the 4 spam emails.</figcaption>
+        </figure>
+        <p data-speak="Now the same 8 emails, seen by logistic regression. It cannot ask questions — it can only draw one straight line. Emails above the line get called spam, emails below it get let through. The straight line gets 6 of the 8 right. Email 7, the polite newsletter that says free once, lands on the spam side; email 4, the shouting spam with no free in it, slips below the line. One straight line is simple and honest, but it cannot bend around exceptions."><b>Same data, logistic regression.</b> It can't ask questions — it draws <i>one straight line</i>. Points above the line are called spam; below it, let through:</p>
+        <figure>
+          <svg viewBox="0 0 680 300" role="img" aria-label="Scatter of the 8 emails with a straight dashed boundary line; 6 of 8 land on the correct side">
+            <rect x="70" y="20" width="560" height="220" rx="8" fill="#FBFAF6" stroke="#E3DAC6"/>
+            <!-- boundary: from (110,66) to (600,196) -->
+            <line x1="96" y1="100" x2="616" y2="190" stroke="#3B5BFD" stroke-width="2.4" stroke-dasharray="8 6"/>
+            <text x="400" y="118" font-size="13" font-weight="700" fill="#2B44C8" transform="rotate(10 400 118)">the straight boundary</text>
+            <text x="120" y="48" font-size="13" font-weight="700" fill="#B91C1C">called spam ↑</text>
+            <text x="470" y="228" font-size="13" font-weight="700" fill="#15803D">let through ↓</text>
+            <!-- y axis: free yes top row y=80, no bottom row y=190 ; x: !!=0→150,1→250,2→350,3→450,4→550 -->
+            <!-- spam points -->
+            <g font-size="12.5" font-weight="700">
+              <circle cx="450" cy="80" r="11" fill="#F87171" stroke="#fff" stroke-width="2"/><text x="450" y="84" text-anchor="middle" fill="#fff">1</text>
+              <circle cx="250" cy="80" r="11" fill="#F87171" stroke="#fff" stroke-width="2"/><text x="250" y="84" text-anchor="middle" fill="#fff">2</text>
+              <circle cx="350" cy="80" r="11" fill="#F87171" stroke="#fff" stroke-width="2"/><text x="350" y="84" text-anchor="middle" fill="#fff">3</text>
+              <circle cx="550" cy="190" r="11" fill="#F87171" stroke="#fff" stroke-width="2"/><text x="550" y="194" text-anchor="middle" fill="#fff">4</text>
+              <!-- not spam -->
+              <circle cx="150" cy="190" r="11" fill="#4ADE80" stroke="#fff" stroke-width="2"/><text x="150" y="194" text-anchor="middle" fill="#14532D">5</text>
+              <circle cx="250" cy="190" r="11" fill="#4ADE80" stroke="#fff" stroke-width="2"/><text x="250" y="194" text-anchor="middle" fill="#14532D">6</text>
+              <circle cx="150" cy="80" r="11" fill="#4ADE80" stroke="#fff" stroke-width="2"/><text x="150" y="84" text-anchor="middle" fill="#14532D">7</text>
+              <circle cx="150" cy="190" r="11" fill="#4ADE80" stroke="#fff" stroke-width="2" transform="translate(26 10)"/><text x="176" y="204" text-anchor="middle" fill="#14532D">8</text>
+            </g>
+            <text x="86" y="86" font-size="12.5" fill="#5B6470">"free" = yes</text>
+            <text x="86" y="196" font-size="12.5" fill="#5B6470">"free" = no</text>
+            <g font-size="12.5" fill="#5B6470" text-anchor="middle">
+              <text x="150" y="262">0 "!"</text><text x="250" y="262">1 "!"</text><text x="350" y="262">2 "!"</text><text x="450" y="262">3 "!"</text><text x="550" y="262">4 "!"</text>
+            </g>
+            <text x="340" y="288" text-anchor="middle" font-size="13" fill="#5B6470">The line gets 6 of 8: email 7 (says "free", but honest) is jailed; email 4 (spam, no "free") slips through.</text>
+          </svg>
+          <figcaption>One straight line is simple and honest — but it can't bend around exceptions.</figcaption>
+        </figure>
+      </section>
+
+      <!-- ================= 05 ================= -->
+      <section class="card" id="sec5">
+        <div class="card-head">
+          <div class="badge">05</div>
+          <div>
+            <p class="kicker">The geometry of sorting</p>
+            <h2 data-speak="Section 5. Decision boundaries.">Decision boundaries</h2>
+          </div>
+        </div>
+        <p class="lead" data-speak="Plot every email as a dot, using its two features as the map coordinates. The model's decision boundary is the line or curve it draws on that map: dots on one side get one label, dots on the other side get the other. The boundary is the model's whole opinion, drawn as a line.">Plot every email as a dot, its two features as map coordinates. The model's <b>decision boundary</b> is the line or curve it draws on that map: dots on one side get one label, dots on the other side get the other. <b>The boundary is the model's whole opinion, drawn as a line.</b></p>
+        <div class="fig-grid">
+          <figure>
+            <svg viewBox="0 0 320 240" role="img" aria-label="Scatter plot with a straight decision boundary">
+              <rect x="30" y="14" width="272" height="180" rx="8" fill="#FBFAF6" stroke="#E3DAC6"/>
+              <line x1="52" y1="168" x2="286" y2="44" stroke="#3B5BFD" stroke-width="2.4"/>
+              <g fill="#F87171" stroke="#fff" stroke-width="1.6">
+                <circle cx="200" cy="60" r="7"/><circle cx="238" cy="82" r="7"/><circle cx="176" cy="88" r="7"/><circle cx="252" cy="52" r="7"/><circle cx="216" cy="112" r="7"/><circle cx="262" cy="104" r="7"/>
+              </g>
+              <g fill="#4ADE80" stroke="#fff" stroke-width="1.6">
+                <circle cx="80" cy="150" r="7"/><circle cx="118" cy="128" r="7"/><circle cx="66" cy="112" r="7"/><circle cx="140" cy="160" r="7"/><circle cx="102" cy="176" r="7"/><circle cx="150" cy="118" r="7"/>
+              </g>
+              <text x="166" y="222" text-anchor="middle" font-size="13.5" font-weight="700" fill="#23272F">Straight — logistic regression</text>
+            </svg>
+            <figcaption>One straight cut. Simple, and it generalizes — but it can't curve around a clump.</figcaption>
+          </figure>
+          <figure>
+            <svg viewBox="0 0 320 240" role="img" aria-label="Scatter plot with a wiggly decision boundary wrapping around individual points">
+              <rect x="30" y="14" width="272" height="180" rx="8" fill="#FBFAF6" stroke="#E3DAC6"/>
+              <path d="M40 150 C 90 60, 130 190, 175 120 C 205 75, 195 40, 240 55 C 275 66, 285 40, 300 30" fill="none" stroke="#3B5BFD" stroke-width="2.4"/>
+              <path d="M120 186 C 140 150, 175 165, 168 140" fill="none" stroke="#3B5BFD" stroke-width="2.4"/>
+              <g fill="#F87171" stroke="#fff" stroke-width="1.6">
+                <circle cx="200" cy="60" r="7"/><circle cx="238" cy="82" r="7"/><circle cx="176" cy="88" r="7"/><circle cx="252" cy="52" r="7"/><circle cx="216" cy="112" r="7"/><circle cx="262" cy="104" r="7"/>
+              </g>
+              <g fill="#4ADE80" stroke="#fff" stroke-width="1.6">
+                <circle cx="80" cy="150" r="7"/><circle cx="118" cy="128" r="7"/><circle cx="66" cy="112" r="7"/><circle cx="140" cy="160" r="7"/><circle cx="102" cy="176" r="7"/><circle cx="152" cy="152" r="7"/>
+              </g>
+              <text x="166" y="222" text-anchor="middle" font-size="13.5" font-weight="700" fill="#23272F">Wiggly — k-NN, deep trees</text>
+            </svg>
+            <figcaption>The curve bends to hug every training dot — even the one stray green dot deep in red country.</figcaption>
+          </figure>
+        </div>
+        <p data-speak="Here is the key intuition. A wigglier boundary fits the training dots better — it can wrap around every single one. But the tighter it hugs the practice dots, the less you should trust it on new dots, which never land in exactly the same places. Hold that thought — it becomes the number one mistake in section 7.">The key intuition: <b>a wigglier boundary fits the training dots better</b> — it can wrap around every one. But the tighter it hugs the practice dots, the <b>less you should trust it on new dots</b>, which never land in exactly the same places. Hold that thought — it's mistake #1 in §07.</p>
+
+        <div class="widget" id="playground">
+          <h3 data-speak="Widget. The boundary playground. Drag the flexibility slider and watch the boundary change.">🎛 The boundary playground</h3>
+          <p class="w-sub">Same dots, one slider. <b>Flexibility</b> = how much the model is allowed to bend its boundary. Dots ● are the training set (practice); squares ■ are the test set (the final exam — the model never trained on them).</p>
+          <canvas class="plot" id="bpCanvas" width="640" height="440" aria-label="Scatter plot whose decision boundary redraws as you drag the flexibility slider"></canvas>
+          <div class="legend-row">
+            <span><span class="dot" style="background:#EF4444"></span>spam</span>
+            <span><span class="dot" style="background:#22C55E"></span>not spam</span>
+            <span><span class="sq" style="background:#94A3B8"></span>shape: ● training · ■ test</span>
+            <span>Background tint = what the model predicts there</span>
+          </div>
+          <div class="slider-row">
+            <label for="flexSlider">Model flexibility</label>
+            <input type="range" id="flexSlider" min="1" max="10" step="1" value="4" />
+            <output id="flexOut" for="flexSlider">4</output>
+          </div>
+          <div class="readouts">
+            <div class="readout"><div class="r-num" id="trainAcc">–</div><div class="r-lab">Training accuracy (practice)</div></div>
+            <div class="readout"><div class="r-num" id="testAcc">–</div><div class="r-lab">Test accuracy (final exam)</div></div>
+          </div>
+          <div class="verdict" id="bpVerdict">Drag the slider and watch the two scores pull apart.</div>
+          <p class="small" style="margin-top:10px;">Push flexibility to 10: training hits ~100% while the test score <i>falls</i>. That gap is overfitting, live.</p>
+        </div>
+      </section>
+
+      <!-- ================= 06 ================= -->
+      <section class="card" id="sec6">
+        <div class="card-head">
+          <div class="badge">06</div>
+          <div>
+            <p class="kicker">Grading the model</p>
+            <h2 data-speak="Section 6. Is it any good? The confusion matrix.">Is it any good? The confusion matrix</h2>
+          </div>
+        </div>
+        <p class="lead" data-speak="One score is not enough. The confusion matrix is a two-by-two table that lines up what the model predicted against what was actually true. Its four boxes have names. True positive: predicted spam, and it really was spam — caught. False positive: predicted spam, but it was good mail — a false alarm. False negative: predicted not spam, but it was spam — a miss. True negative: predicted not spam, and it was not — correctly let through.">One score hides the story. The <b>confusion matrix</b> is a 2×2 table: what the model <i>predicted</i> against what was <i>actually true</i>. Its four boxes:</p>
+        <div class="cm" role="img" aria-label="Confusion matrix for 100 test emails: 42 true positives, 6 false positives, 4 false negatives, 48 true negatives">
+          <div class="cm-h"></div>
+          <div class="cm-h">Actually spam</div>
+          <div class="cm-h">Actually not spam</div>
+          <div class="cm-h">Predicted spam</div>
+          <div class="cm-cell good"><b>42 · True Positive</b><span class="cell-note">Flagged as spam — and it was. Caught. ✓</span></div>
+          <div class="cm-cell bad"><b>6 · False Positive</b><span class="cell-note">Flagged as spam — but it was good mail. A false alarm. ✗</span></div>
+          <div class="cm-h">Predicted not spam</div>
+          <div class="cm-cell bad"><b>4 · False Negative</b><span class="cell-note">Let through — but it was spam. A miss. ✗</span></div>
+          <div class="cm-cell good"><b>48 · True Negative</b><span class="cell-note">Let through — and it was good mail. Correct. ✓</span></div>
+        </div>
+        <p data-speak="Worked numbers: run the filter on 100 test emails. It gets 42 plus 48, that is 90, right. Accuracy — the share of all predictions that were correct — is 90 percent. But accuracy mixes all mistakes together. Two sharper questions split them apart. Precision asks: of the mail flagged as spam, how much truly was spam? Here, 42 out of 48 flagged, about 88 percent. Recall asks: of all the real spam, how much got caught? Here, 42 out of 46, about 91 percent."><b>Worked numbers</b> (100 test emails): correct = 42 + 48 = 90, so <b>accuracy</b> — the share of all predictions that were right — is <b>90%</b>. But accuracy blends both kinds of mistake. Two sharper questions split them apart:</p>
+        <p>· <b>Precision:</b> of the mail <i>flagged</i> as spam, how much truly was? → 42 of 48 flagged ≈ <b>88%</b>.<br />
+        · <b>Recall:</b> of <i>all real spam</i>, how much got caught? → 42 of 46 real spam ≈ <b>91%</b>.</p>
+        <div class="callout warn"><b>The tradeoff, in one line:</b> an aggressive filter catches <i>all</i> the spam (perfect recall) — but jails good mail with it (precision crashes). You can't max both; you choose which mistake hurts more.</div>
+
+        <div class="widget" id="cmExplorer">
+          <h3 data-speak="Widget. The confusion matrix explorer. Move the four counts and watch accuracy, precision, and recall change.">🎛 Confusion matrix explorer</h3>
+          <p class="w-sub">Move the four counts and watch the three scores react. Try making a "lazy" filter — or a reckless one — and read the verdict.</p>
+          <div class="cm-edit">
+            <div class="slider-row"><label for="tpSlider">True positives</label><input type="range" id="tpSlider" min="0" max="100" step="1" value="42" /><output id="tpOut">42</output></div>
+            <div class="slider-row"><label for="fpSlider">False positives</label><input type="range" id="fpSlider" min="0" max="100" step="1" value="6" /><output id="fpOut">6</output></div>
+            <div class="slider-row"><label for="fnSlider">False negatives</label><input type="range" id="fnSlider" min="0" max="100" step="1" value="4" /><output id="fnOut">4</output></div>
+            <div class="slider-row"><label for="tnSlider">True negatives</label><input type="range" id="tnSlider" min="0" max="100" step="1" value="48" /><output id="tnOut">48</output></div>
+          </div>
+          <div class="readouts">
+            <div class="readout"><div class="r-num" id="cmAcc">–</div><div class="r-lab">Accuracy</div></div>
+            <div class="readout"><div class="r-num" id="cmPrec">–</div><div class="r-lab">Precision</div></div>
+            <div class="readout"><div class="r-num" id="cmRec">–</div><div class="r-lab">Recall</div></div>
+          </div>
+          <div class="verdict" id="cmVerdict">…</div>
+        </div>
+      </section>
+
+      <!-- ================= 07 ================= -->
+      <section class="card" id="sec7">
+        <div class="card-head">
+          <div class="badge">07</div>
+          <div>
+            <p class="kicker">Where beginners get burned</p>
+            <h2 data-speak="Section 7. The classic mistakes.">The classic mistakes</h2>
+          </div>
+        </div>
+        <p class="lead" data-speak="Mistake one: overfitting. The model memorizes the practice test instead of learning the real pattern. Its boundary wiggles around every training dot, training score is perfect — and then new mail lands in the wiggles' blind spots and gets sorted wrong. Memorizing is not learning."><b>Mistake 1 — Overfitting: memorizing the practice test.</b> The model's boundary wiggles around every training dot until the practice score is perfect — but new mail lands in the wiggles' blind spots and gets sorted wrong. Memorizing is not learning.</p>
+        <div class="fig-grid">
+          <figure>
+            <svg viewBox="0 0 320 235" role="img" aria-label="Smooth boundary generalizing: a new star point lands on the correct side">
+              <rect x="30" y="14" width="272" height="172" rx="8" fill="#FBFAF6" stroke="#E3DAC6"/>
+              <line x1="52" y1="160" x2="286" y2="48" stroke="#3B5BFD" stroke-width="2.4"/>
+              <g fill="#F87171" stroke="#fff" stroke-width="1.6"><circle cx="205" cy="58" r="7"/><circle cx="240" cy="84" r="7"/><circle cx="180" cy="90" r="7"/><circle cx="255" cy="54" r="7"/></g>
+              <g fill="#4ADE80" stroke="#fff" stroke-width="1.6"><circle cx="82" cy="146" r="7"/><circle cx="120" cy="126" r="7"/><circle cx="70" cy="108" r="7"/><circle cx="142" cy="156" r="7"/></g>
+              <path d="M228 128 l3.4 7 7.4 1 -5.4 5.2 1.3 7.4 -6.7 -3.5 -6.6 3.5 1.3 -7.4 -5.4 -5.2 7.4 -1 z" fill="#F59E0B" stroke="#B45309" stroke-width="1.2"/>
+              <text x="166" y="212" text-anchor="middle" font-size="13.5" font-weight="700" fill="#15803D">Smooth: new mail (★) sorted right</text>
+            </svg>
+            <figcaption>A plain boundary learns the <i>pattern</i>, so unseen mail still lands correctly.</figcaption>
+          </figure>
+          <figure>
+            <svg viewBox="0 0 320 235" role="img" aria-label="Wiggly overfit boundary: a new star point lands in a wiggle pocket on the wrong side">
+              <rect x="30" y="14" width="272" height="172" rx="8" fill="#FBFAF6" stroke="#E3DAC6"/>
+              <path d="M40 148 C 85 55, 130 185, 172 118 C 200 74, 192 38, 238 52 C 272 62, 282 38, 300 28 L300 186 L40 186 Z" fill="#FEE2E2" opacity="0.45"/>
+              <path d="M40 148 C 85 55, 130 185, 172 118 C 200 74, 192 38, 238 52 C 272 62, 282 38, 300 28" fill="none" stroke="#3B5BFD" stroke-width="2.4"/>
+              <path d="M205 165 C 220 138, 248 142, 244 118 C 241 100, 262 96, 268 112" fill="none" stroke="#3B5BFD" stroke-width="2.4"/>
+              <g fill="#F87171" stroke="#fff" stroke-width="1.6"><circle cx="205" cy="58" r="7"/><circle cx="240" cy="84" r="7"/><circle cx="180" cy="90" r="7"/><circle cx="255" cy="54" r="7"/></g>
+              <g fill="#4ADE80" stroke="#fff" stroke-width="1.6"><circle cx="82" cy="146" r="7"/><circle cx="120" cy="126" r="7"/><circle cx="70" cy="108" r="7"/><circle cx="142" cy="156" r="7"/></g>
+              <path d="M228 128 l3.4 7 7.4 1 -5.4 5.2 1.3 7.4 -6.7 -3.5 -6.6 3.5 1.3 -7.4 -5.4 -5.2 7.4 -1 z" fill="#F59E0B" stroke="#B45309" stroke-width="1.2"/>
+              <text x="166" y="212" text-anchor="middle" font-size="13.5" font-weight="700" fill="#B91C1C">Wiggly: same new mail (★) trapped in a pocket</text>
+            </svg>
+            <figcaption>The wiggly boundary aced training — then a wiggle pocket swallows the new spam ★ whole.</figcaption>
+          </figure>
+        </div>
+        <p data-speak="Mistake two: the imbalanced-data trap. Imbalanced means one bucket dwarfs the other. Suppose 99 of 100 emails are not spam. A lazy model that always says not spam — that catches literally zero spam — scores 99 percent accuracy. The score looks brilliant and the filter is useless. That is why section 6 gave you precision and recall: on lopsided data, they tell the truth that accuracy hides."><b>Mistake 2 — The imbalanced-data trap.</b> <i>Imbalanced</i> means one bucket dwarfs the other. Say 99 of 100 emails are "not spam." A lazy model that <b>always</b> answers "not spam" — catching literally zero spam — scores <b>99% accuracy</b>. The score looks brilliant; the filter is useless. That's exactly why §06 gave you precision and recall: on lopsided data, they tell the truth accuracy hides.</p>
+        <div class="callout rule"><b>Rule of thumb:</b> never trust accuracy alone on lopsided data. Ask for precision and recall before you believe any score.</div>
+        <details class="tryit">
+          <summary><span class="qmark">?</span>Try it: a tumor test is right 99% of the time, but only 1 in 100 tumors is malignant. Impressed?</summary>
+          <div class="ans"><b>No.</b> A "test" that always says <span class="pill green">benign</span> also scores 99% — and misses <i>every</i> dangerous tumor (recall = 0). On lopsided data, demand precision and recall, not accuracy.</div>
+        </details>
+      </section>
+
+      <!-- ================= POCKET RULES ================= -->
+      <section class="card pocket" id="pocket">
+        <p class="kicker" style="color:var(--green-ink)">Keep these</p>
+        <h2 data-speak="Pocket rules. The whole lesson in six lines.">Pocket rules</h2>
+        <ul>
+          <li><b>Classification = predicting categories</b> from labeled examples.</li>
+          <li><b>Train on practice, judge on the final exam</b> — the test set is the only score you trust.</li>
+          <li><b>The boundary is the model's opinion</b>, drawn as a line.</li>
+          <li><b>Accuracy lies on lopsided data</b> — check precision and recall.</li>
+          <li><b>Wiggly boundaries memorize; smooth ones generalize.</b></li>
+          <li><b>Start simple</b> (logistic regression) before you go fancy.</li>
+        </ul>
+      </section>
+
+      <!-- ================= QUIZ ================= -->
+      <section class="card" id="quiz">
+        <p class="kicker">Prove it to yourself</p>
+        <h2 data-speak="Check your learning. Five questions. Answer all five, then press submit.">Check your learning</h2>
+        <p class="small">Five questions on the ideas that matter. Answer all five, then press Submit.</p>
+        <form id="quizForm" novalidate>
+          <div class="quiz-q" data-answer="a">
+            <p class="qq">1. Sorting mail into <i>spam</i> / <i>not spam</i> — classification or regression?</p>
+            <label class="opt"><input type="radio" name="q1" value="a" /> Classification — the answer is a category, not a number</label>
+            <label class="opt"><input type="radio" name="q1" value="b" /> Regression — the answer is a category, not a number</label>
+            <label class="opt"><input type="radio" name="q1" value="c" /> Neither — email can't be learned from</label>
+            <p class="expl"><b>Classification.</b> Spam / not spam are named buckets. Regression is for answers that are numbers, like a temperature.</p>
+          </div>
+          <div class="quiz-q" data-answer="b">
+            <p class="qq">2. What does "labeled data" mean?</p>
+            <label class="opt"><input type="radio" name="q2" value="a" /> Data that has been sorted into folders</label>
+            <label class="opt"><input type="radio" name="q2" value="b" /> Examples that come with the right answer attached</label>
+            <label class="opt"><input type="radio" name="q2" value="c" /> Data with all the answers removed</label>
+            <p class="expl"><b>Labels are the answers.</b> Each training example carries its correct bucket — that's what makes the learning "supervised."</p>
+          </div>
+          <div class="quiz-q" data-answer="c">
+            <p class="qq">3. A model scores 99% accuracy on mail that is 99-to-1 "not spam." Trust it?</p>
+            <label class="opt"><input type="radio" name="q3" value="a" /> Yes — 99% is 99%</label>
+            <label class="opt"><input type="radio" name="q3" value="b" /> Yes, if the training set was large</label>
+            <label class="opt"><input type="radio" name="q3" value="c" /> No — a lazy "always not spam" model scores the same and catches nothing; check precision and recall</label>
+            <p class="expl"><b>Not trustworthy.</b> On lopsided data, accuracy rewards doing nothing. Precision and recall expose a filter that catches zero spam.</p>
+          </div>
+          <div class="quiz-q" data-answer="a">
+            <p class="qq">4. Which line has precision and recall the right way round?</p>
+            <label class="opt"><input type="radio" name="q4" value="a" /> Precision: of the mail flagged as spam, how much truly was · Recall: of all real spam, how much got caught</label>
+            <label class="opt"><input type="radio" name="q4" value="b" /> Precision: of all real spam, how much got caught · Recall: of the mail flagged as spam, how much truly was</label>
+            <label class="opt"><input type="radio" name="q4" value="c" /> They are two names for the same number</label>
+            <p class="expl"><b>Precision judges the flags; recall judges the catch.</b> Flag carefully → precision. Catch everything → recall. You trade one against the other.</p>
+          </div>
+          <div class="quiz-q" data-answer="b">
+            <p class="qq">5. Which classifier asks its nearest examples what they are, and copies the majority?</p>
+            <label class="opt"><input type="radio" name="q5" value="a" /> Logistic Regression</label>
+            <label class="opt"><input type="radio" name="q5" value="b" /> k-NN (k nearest neighbors)</label>
+            <label class="opt"><input type="radio" name="q5" value="c" /> SVM</label>
+            <p class="expl"><b>k-NN.</b> It stores the examples and, for each new one, asks the k closest neighbors to vote. Logistic regression draws a line; SVM draws the widest one.</p>
+          </div>
+          <div class="quiz-actions">
+            <button class="btn" type="submit">Submit answers</button>
+            <button class="btn ghost" type="button" id="quizReset">Try again</button>
+            <span class="score" id="quizScore" aria-live="polite"></span>
+          </div>
+        </form>
+      </section>
+
+      <!-- ================= ROADMAP ================= -->
+      <section class="card" id="roadmap">
+        <p class="kicker">Where you are</p>
+        <h2 data-speak="Roadmap. You are here: classification. Next: regression, then clustering.">Roadmap — supervised learning path</h2>
+        <div class="road" role="img" aria-label="Roadmap: classification is this lesson; regression and clustering come next">
+          <div class="stop here">Classification<small>● this lesson — predicting categories</small></div>
+          <div class="stop">Regression<small>○ next — predicting numbers</small></div>
+          <div class="stop">Clustering<small>○ later — finding groups with no labels</small></div>
+        </div>
+        <p class="small">● = this lesson · ○ = still to come. Classification and regression together make up <b>supervised learning</b>; clustering starts the <b>unsupervised</b> branch, where there are no labels at all.</p>
+      </section>
+
+      <div class="nextup"><b>Next up: Regression — A Beginner's Map</b> — predicting numbers instead of categories. Ask in chat and it's yours.</div>
+
+      <p class="colophon">Standard machine-learning concepts (train/test split, decision boundaries, confusion matrix, precision/recall), explained in plain words. Small datasets on this page are illustrative. Verify the details against a textbook or course before relying on them.</p>
+
+    </main>
+
+    <script>
+      /* ================= helpers ================= */
+      function mulberry32(seed){
+        return function(){
+          seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+          var t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+          t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+          return ((t ^ t >>> 14) >>> 0) / 4294967296;
+        };
+      }
+      function gauss(rng){
+        var u = 0, v = 0;
+        while (u === 0) u = rng();
+        while (v === 0) v = rng();
+        return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+      }
+      function clamp(v, lo, hi){ return Math.max(lo, Math.min(hi, v)); }
+
+      /* ================= Listen mode ================= */
+      (function(){
+        var btn = document.getElementById('listenBtn');
+        var stopBtn = document.getElementById('stopBtn');
+        var state = document.getElementById('listenState');
+        var synth = window.speechSynthesis || null;
+        var chunks = [];
+        document.querySelectorAll('[data-speak]').forEach(function(el){
+          var t = (el.getAttribute('data-speak') || '').trim();
+          if (t) chunks.push(t);
+        });
+        var idx = 0, playing = false, paused = false;
+        function setUI(){
+          if (playing && !paused){ btn.textContent = '⏸ Pause'; }
+          else if (playing && paused){ btn.textContent = '▶ Resume'; }
+          else { btn.textContent = '▶ Listen to this lesson'; }
+          stopBtn.disabled = !playing;
+          state.textContent = playing
+            ? ('Reading section ' + Math.min(idx + 1, chunks.length) + ' of ' + chunks.length + '…')
+            : 'Reads the lesson aloud, section by section.';
+        }
+        function speakNext(){
+          if (!playing) return;
+          if (idx >= chunks.length){ stopAll(); return; }
+          var u = new SpeechSynthesisUtterance(chunks[idx]);
+          u.rate = 1;
+          u.onend = function(){ if (playing && !paused){ idx++; speakNext(); setUI(); } };
+          u.onerror = function(){ if (playing){ idx++; speakNext(); } };
+          synth.speak(u);
+          setUI();
+        }
+        function stopAll(){
+          playing = false; paused = false; idx = 0;
+          if (synth) synth.cancel();
+          setUI();
+        }
+        if (!synth){
+          btn.disabled = true;
+          state.textContent = 'Sorry — this browser has no built-in voice for Listen mode.';
+          return;
+        }
+        btn.addEventListener('click', function(){
+          if (!playing){
+            playing = true; paused = false; idx = 0;
+            synth.cancel();
+            speakNext();
+          } else if (!paused){
+            paused = true; synth.pause(); setUI();
+          } else {
+            paused = false; synth.resume(); setUI();
+          }
+        });
+        stopBtn.addEventListener('click', stopAll);
+      })();
+
+      /* ================= Copy button ================= */
+      (function(){
+        var btn = document.getElementById('copyBtn');
+        var pre = document.getElementById('codePre');
+        if (!btn || !pre) return;
+        btn.addEventListener('click', function(){
+          var text = pre.innerText.replace(/^\s*\d+\s*/gm, '').replace(/\n{3,}/g, '\n\n');
+          function done(){ btn.textContent = 'Copied ✓'; setTimeout(function(){ btn.textContent = 'Copy'; }, 1600); }
+          if (navigator.clipboard && navigator.clipboard.writeText){
+            navigator.clipboard.writeText(text).then(done, done);
+          } else {
+            var ta = document.createElement('textarea');
+            ta.value = text; document.body.appendChild(ta); ta.select();
+            try { document.execCommand('copy'); } catch (e) {}
+            document.body.removeChild(ta); done();
+          }
+        });
+      })();
+
+      /* ================= Boundary playground ================= */
+      (function(){
+        var canvas = document.getElementById('bpCanvas');
+        if (!canvas) return;
+        var ctx = canvas.getContext('2d');
+        var W = canvas.width, H = canvas.height;
+        var PAD = 34, plotW = W - PAD * 2, plotH = H - PAD * 2 - 18;
+        function makeSet(seed, perClass, extraStrays){
+          var rng = mulberry32(seed), pts = [];
+          var i, x, y;
+          for (i = 0; i < perClass; i++){
+            x = clamp(2.1 + gauss(rng) * 0.9, 0.25, 5.75);
+            y = clamp(2.0 + gauss(rng) * 0.9, 0.25, 5.75);
+            pts.push({ x: x, y: y, c: 0 }); // not spam, low corner
+          }
+          for (i = 0; i < perClass; i++){
+            x = clamp(3.9 + gauss(rng) * 0.9, 0.25, 5.75);
+            y = clamp(4.0 + gauss(rng) * 0.9, 0.25, 5.75);
+            pts.push({ x: x, y: y, c: 1 }); // spam, high corner
+          }
+          // strays: the dots a wiggly boundary will chase
+          pts.push({ x: 4.6, y: 1.1, c: 1 });
+          pts.push({ x: 1.3, y: 4.9, c: 0 });
+          pts.push({ x: 3.1, y: 3.0, c: 1 });
+          pts.push({ x: 2.9, y: 2.8, c: 0 });
+          if (extraStrays) extraStrays.forEach(function(s){ pts.push(s); });
+          return pts;
+        }
+        var train = makeSet(7, 13, null);
+        // test strays sit next to opposite-class training strays — wiggly boundaries swallow them
+        var test  = makeSet(555, 9, [
+          { x: 4.35, y: 1.35, c: 0 },
+          { x: 1.55, y: 4.65, c: 1 },
+          { x: 3.35, y: 2.75, c: 0 },
+          { x: 2.65, y: 3.25, c: 1 }
+        ]);
+        function predict(px, py, h, pts){
+          var s0 = 0, s1 = 0, i, dx, dy, d2, w;
+          for (i = 0; i < pts.length; i++){
+            dx = px - pts[i].x; dy = py - pts[i].y; d2 = dx * dx + dy * dy;
+            w = Math.exp(-d2 / (2 * h * h));
+            if (pts[i].c === 1) s1 += w; else s0 += w;
+          }
+          return s1 > s0 ? 1 : 0;
+        }
+        function accuracy(pts, h){
+          var ok = 0;
+          for (var i = 0; i < pts.length; i++){
+            if (predict(pts[i].x, pts[i].y, h, train) === pts[i].c) ok++;
+          }
+          return Math.round(100 * ok / pts.length);
+        }
+        function sx(v){ return PAD + (v / 6) * plotW; }
+        function sy(v){ return PAD + plotH - (v / 6) * plotH; }
+        var slider = document.getElementById('flexSlider');
+        var out = document.getElementById('flexOut');
+        var trainEl = document.getElementById('trainAcc');
+        var testEl = document.getElementById('testAcc');
+        var verdict = document.getElementById('bpVerdict');
+        function draw(){
+          var f = parseInt(slider.value, 10);
+          out.textContent = f;
+          var h = 2.3 * Math.pow(0.70, f - 1);
+          // background regions
+          var cells = 46, cw = plotW / cells, ch = plotH / cells, i, j;
+          for (i = 0; i < cells; i++){
+            for (j = 0; j < cells; j++){
+              var gx = ((i + 0.5) / cells) * 6, gy = ((j + 0.5) / cells) * 6;
+              var p = predict(gx, gy, h, train);
+              ctx.fillStyle = p === 1 ? '#FBD5D5' : '#CDEEDB';
+              ctx.fillRect(PAD + i * cw, PAD + (cells - 1 - j) * ch, cw + 1, ch + 1);
+            }
+          }
+          // frame + axis labels
+          ctx.strokeStyle = '#C9C2AE'; ctx.lineWidth = 1.5;
+          ctx.strokeRect(PAD, PAD, plotW, plotH);
+          ctx.fillStyle = '#5B6470'; ctx.font = '13px sans-serif'; ctx.textAlign = 'center';
+          ctx.fillText('spammy words in the email →', PAD + plotW / 2, H - 8);
+          ctx.save();
+          ctx.translate(14, PAD + plotH / 2); ctx.rotate(-Math.PI / 2);
+          ctx.fillText('shouting (ALL CAPS) →', 0, 0);
+          ctx.restore();
+          // test points as squares
+          test.forEach(function(p){
+            ctx.fillStyle = p.c === 1 ? '#EF4444' : '#22C55E';
+            ctx.strokeStyle = '#FFFFFF'; ctx.lineWidth = 1.6;
+            var x = sx(p.x), y = sy(p.y);
+            ctx.beginPath(); ctx.rect(x - 5.5, y - 5.5, 11, 11); ctx.fill(); ctx.stroke();
+          });
+          // train points as circles
+          train.forEach(function(p){
+            ctx.fillStyle = p.c === 1 ? '#EF4444' : '#22C55E';
+            ctx.strokeStyle = '#FFFFFF'; ctx.lineWidth = 2;
+            ctx.beginPath(); ctx.arc(sx(p.x), sy(p.y), 6.5, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+          });
+          var ta = accuracy(train, h), te = accuracy(test, h);
+          trainEl.textContent = ta + '%';
+          testEl.textContent = te + '%';
+          if (f <= 3){
+            verdict.innerHTML = '<b>Too stiff.</b> The boundary barely bends, so it misses real patterns — even the practice score suffers. This is <i>underfitting</i>.';
+          } else if (f <= 7){
+            verdict.innerHTML = '<b>The healthy middle.</b> The boundary follows the real clumps without chasing every stray dot — practice and final-exam scores stay close.';
+          } else {
+            verdict.innerHTML = '<b>Memorizing.</b> Training is near-perfect, but the boundary contorts around strays — and the final-exam score drops. The train–test gap (' + (ta - te) + ' points) is overfitting, measured.';
+          }
+        }
+        slider.addEventListener('input', draw);
+        draw();
+      })();
+
+      /* ================= Confusion matrix explorer ================= */
+      (function(){
+        var ids = ['tp', 'fp', 'fn', 'tn'];
+        var els = {};
+        ids.forEach(function(k){
+          els[k] = {
+            s: document.getElementById(k + 'Slider'),
+            o: document.getElementById(k + 'Out')
+          };
+        });
+        var accEl = document.getElementById('cmAcc');
+        var precEl = document.getElementById('cmPrec');
+        var recEl = document.getElementById('cmRec');
+        var verdict = document.getElementById('cmVerdict');
+        if (!els.tp.s) return;
+        function pct(num, den){
+          if (!den) return '—';
+          return Math.round(100 * num / den) + '%';
+        }
+        function update(){
+          var v = {};
+          ids.forEach(function(k){
+            v[k] = parseInt(els[k].s.value, 10);
+            els[k].o.textContent = v[k];
+          });
+          var total = v.tp + v.fp + v.fn + v.tn;
+          var acc = (v.tp + v.tn) / (total || 1);
+          var prec = (v.tp + v.fp) ? v.tp / (v.tp + v.fp) : null;
+          var rec = (v.tp + v.fn) ? v.tp / (v.tp + v.fn) : null;
+          accEl.textContent = total ? Math.round(100 * acc) + '%' : '—';
+          precEl.textContent = prec === null ? '—' : Math.round(100 * prec) + '%';
+          recEl.textContent = rec === null ? '—' : Math.round(100 * rec) + '%';
+          var msg;
+          if (!total){
+            msg = 'All four counts are zero — there is nothing to grade yet.';
+          } else if (v.tp === 0 && v.fp === 0 && v.fn > 0){
+            msg = '<b>The lazy filter.</b> It flags nothing, so precision is undefined and recall is 0% — yet accuracy can still look great on lopsided mail. This is the §07 trap, live.';
+          } else if (prec !== null && prec < 0.6){
+            msg = '<b>Too trigger-happy.</b> Precision is low: most of what it jails is good mail. Users will hate this filter — tighten it up.';
+          } else if (rec !== null && rec < 0.6){
+            msg = '<b>Too leaky.</b> Recall is low: most real spam sails straight into the inbox. The filter is barely filtering.';
+          } else if (prec !== null && rec !== null && prec >= 0.8 && rec >= 0.8){
+            msg = '<b>Healthy balance.</b> It catches most spam <i>and</i> most of its flags are right. This is what a good filter looks like.';
+          } else {
+            msg = '<b>A real tradeoff.</b> Neither score is terrible, neither is great — exactly the choice every filter designer has to make on purpose.';
+          }
+          verdict.innerHTML = msg;
+        }
+        ids.forEach(function(k){ els[k].s.addEventListener('input', update); });
+        update();
+      })();
+
+      /* ================= Quiz ================= */
+      (function(){
+        var form = document.getElementById('quizForm');
+        var scoreEl = document.getElementById('quizScore');
+        var resetBtn = document.getElementById('quizReset');
+        if (!form) return;
+        var total = form.querySelectorAll('.quiz-q').length;
+        form.addEventListener('submit', function(ev){
+          ev.preventDefault();
+          var score = 0, answered = 0;
+          form.querySelectorAll('.quiz-q').forEach(function(q, i){
+            var picked = form.querySelector('input[name="q' + (i + 1) + '"]:checked');
+            q.classList.remove('right', 'wrong');
+            if (picked){
+              answered++;
+              var ok = picked.value === q.getAttribute('data-answer');
+              if (ok) score++;
+              q.classList.add(ok ? 'right' : 'wrong', 'show');
+            } else {
+              q.classList.add('wrong', 'show');
+            }
+          });
+          if (answered < total){
+            scoreEl.textContent = 'Pick an answer for all ' + total + ' questions first — score so far: ' + score + ' / ' + total + '.';
+          } else if (score === total){
+            scoreEl.textContent = 'Score: ' + score + ' / ' + total + ' — perfect. You can sort with the best of them.';
+          } else {
+            scoreEl.textContent = 'Score: ' + score + ' / ' + total + ' — the explanations above show what to re-check.';
+          }
+        });
+        resetBtn.addEventListener('click', function(){
+          form.reset();
+          form.querySelectorAll('.quiz-q').forEach(function(q){
+            q.classList.remove('right', 'wrong', 'show');
+          });
+          scoreEl.textContent = '';
+        });
+      })();
+    </script>
+  </body>
+</html>

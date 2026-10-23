@@ -1,0 +1,57 @@
+:root {
+  /* Colors */
+  --c-bg: #050505;
+  --c-surface: #0d0d0d;
+  --c-card: #111111;
+  --c-border: #1a1a1a;
+  --c-accent: #caff00;
+  --c-accent-dim: rgba(202, 255, 0, 0.15);
+  --c-accent-glow: rgba(202, 255, 0, 0.35);
+  --c-white: #ffffff;
+  --c-gray-1: #888888;
+  --c-gray-2: #444444;
+
+  /* Typography Scale — fluid via clamp() */
+  --fs-display: clamp(4.5rem, 11vw, 10.5rem);
+  --fs-h1: clamp(2.5rem, 5vw, 4.5rem);
+  --fs-h2: clamp(1.75rem, 3vw, 2.5rem);
+  --fs-h3: clamp(1.25rem, 2vw, 1.75rem);
+  --fs-body: clamp(0.9rem, 1.2vw, 1.1rem);
+  --fs-small: clamp(0.7rem, 1vw, 0.85rem);
+  --fs-mono: clamp(0.7rem, 1vw, 0.8rem);
+
+  /* Fonts */
+  --font-display: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-sans: 'Inter', sans-serif;
+
+  /* Spacing */
+  --sp-1: 0.25rem;
+  --sp-2: 0.5rem;
+  --sp-3: 0.75rem;
+  --sp-4: 1rem;
+  --sp-6: 1.5rem;
+  --sp-8: 2rem;
+  --sp-12: 3rem;
+  --sp-16: 4rem;
+  --sp-24: 6rem;
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.87, 0, 0.13, 1);
+  --dur-fast: 0.2s;
+  --dur-mid: 0.5s;
+  --dur-slow: 0.9s;
+
+  /* Layout */
+  --max-w: 1440px;
+  --gutter: clamp(1.25rem, 4vw, 4rem);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-fast: 0s;
+    --dur-mid: 0s;
+    --dur-slow: 0s;
+  }
+}
