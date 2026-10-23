@@ -7,6 +7,7 @@ node_modules/
 dist/
 build/
 .vercel
+creative-claude-given-web-skills/
 
 # Environment variables & local secrets
 .env
