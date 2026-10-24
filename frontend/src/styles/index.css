@@ -91,3 +91,22 @@
   );
   background-size: 100% 4px;
 }
+
+/* ── Team Section Responsive Styles ────────────────────────── */
+/* Tablet: 2-col cards */
+@media (max-width: 900px) {
+  .team-grid { grid-template-columns: 1fr !important; }
+  .team-cards { grid-template-columns: repeat(2, 1fr) !important; }
+  .team-label-col { border-right: none !important; border-bottom: 1px solid #1A1A1A; padding-bottom: 2rem; margin-bottom: 2rem; }
+}
+
+/* Mobile: 1-col / 2-col cards */
+@media (max-width: 540px) {
+  .team-cards { grid-template-columns: repeat(2, 1fr) !important; }
+  .team-card-image { min-height: 160px !important; }
+}
+
+@media (max-width: 380px) {
+  .team-cards { grid-template-columns: 1fr !important; }
+}
+
